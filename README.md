@@ -3,8 +3,6 @@ Random small games I make that aren't large enough to deserve their own reposito
 Also, they all have god AIs.
 
 
-Included Games:
-
-Naughts and Crosses
-
+Included Games:  
+Naughts and Crosses  
 Rock Paper Scissors
