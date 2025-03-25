@@ -1,79 +1,48 @@
-# pregame setup
 import random
-player_choices = []
-ROCK = 0
-PAPER = 1
-SCISSORS = 2
+
+def format(text: str, fg="-1"):
+	if fg == "-1":
+		code = ""
+	else:
+		code = f";38;2;{int(fg[0:2], 16)};{int(fg[2:4], 16)};{int(fg[4:6], 16)}"
+
+	return f"\033[1{code}m{text}\033[0m"
+
+
+# pregame setup
+choices = {"rock": 0, "paper": 0, "scissors": 0}
+options = ["rock", "paper", "scissors"]
 
 while True:
-	# answers
-	retry = True
-	player_choices_rock = player_choices.count("rock")
-	player_choices_paper = player_choices.count("paper")
-	player_choices_scissors = player_choices.count("scissors")
-	if player_choices_rock > player_choices_paper and player_choices_rock > player_choices_scissors:
-		cpu = random.randint(0, 3)
-		if cpu == 3:
-			cpu = PAPER
-	elif player_choices_paper > player_choices_rock and player_choices_paper > player_choices_scissors:
-		cpu = random.randint(0, 3)
-		if cpu == 3:
-			cpu = SCISSORS
-	else:
-		cpu = random.randint(0, 3)
-		if cpu == 3:
-			cpu = ROCK
-		
-	while retry:
-		retry = False
-		player = input("Rock paper or scissors?\n\nPlayer: ")
-  		# win, loss, or draw
-		if player.lower() == "rock":
-			if cpu == PAPER:
-				result = "Loss"
-			elif cpu == SCISSORS:
-				result = "Win"
-			else:
-				result = "Draw"
-		elif player.lower() == "paper":
-			if cpu == ROCK:
-				result = "Win"
-			elif cpu == SCISSORS:
-				result = "Loss"
-			else:
-				result = "Draw"
-		elif player.lower() == "scissors":
-			if cpu == ROCK:
-				result = "Loss"
-			elif cpu == PAPER:
-				result = "Win"
-			else:
-				result = "Draw"
+	# cpu's choice
+	cpu = random.randint(0, 3)
+	if cpu == 3:
+		if choices["rock"] > choices["paper"] and choices["rock"] > choices["scissors"]:
+			cpu = 1
+		elif choices["paper"] > choices["rock"] and choices["paper"] > choices["scissors"]:
+			cpu = 2
 		else:
-			retry = True
-			print("\nYou have to pick 'Rock', 'Paper' or 'Scissors'.\n")
-	
-	if cpu == ROCK:
-		print("CPU: Rock")
-	elif cpu == PAPER:
-		print("CPU: Paper")
+			cpu = 0
+
+	# player's choice
+	while True:
+		player = input(f"{format("Rock, paper or scissors?")}\n\nPlayer: ").lower()
+		if player in options:
+			break
+		print(format("\nYou have to pick 'Rock', 'Paper' or 'Scissors'.\n", "CC0000"))
+
+	# displaying results
+	print(f"CPU: \033[94m{options[cpu]}\n")
+	p = options.index(player)
+	if p == cpu:
+		print(format("DRAW!", "6699FF"))
+	elif p == cpu + 1 or p == cpu - 2:
+		print(format("YOU WIN!", "77CC66"))
 	else:
-		print("CPU: Scissors")
-	if result == "Win":
-	  	print("\n\033[1;31;48mYOU WIN!\033[0;20;48m\n")
-	elif result == "Loss":
-	  	print("\n\033[1;35;48mYOU LOSE!\033[0;20;48m\n")
-	else:
-	  	print("\n\033[1;32;48mA DRAW!\033[0;29;48m\n")
-	retry = True
-	
-	while retry == True:
-		repeat = input("Do you want to play again? (y/n) ")
-		if repeat.lower() == "y":
-			retry = False
-		elif repeat.lower() == "n":
-			quit("\nThanks for playing!")
-		else:
-			print("Say 'Yes' or 'No'.")
-			retry = True
-	player_choices.append(player.lower())
+		print(format("CPU WINS!", "FF6666"))
+
+	# replay
+	if input("\nDo you want to play again? (y/n) ").lower() == "n":
+		quit("\nThanks for playing!")
+	print()
+	choices[player] += 1
